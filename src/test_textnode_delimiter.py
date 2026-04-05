@@ -1,7 +1,7 @@
 import unittest
 from textnode import *
 from htmlnode import *
-from textnode_delimiter import split_nodes_delimiter
+from textnode_delimiter import *
 
 class TestDelimiter(unittest.TestCase):
      bold_node = TextNode("This is text with a **bold** word", TextType.TEXT)

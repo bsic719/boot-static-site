@@ -1,5 +1,6 @@
 from textnode import *
 from htmlnode import *
+from extract_links import *
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
      new_nodes = []
@@ -27,4 +28,74 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
           
           new_nodes.extend(nodes)
      return new_nodes
+
+def split_nodes_images(old_nodes):
+     new_nodes = []
+
+     for old_node in old_nodes:
+          # if not TextType.TEXT, extend as it is and iterate to next
+          if old_node.text_type != TextType.TEXT:
+               new_nodes.append(old_node)
+               continue
+
+          images = extract_markdown_images(old_node.text)
+          
+          # if no images found, extend the old_node as it is and iterate to the next
+          if not images:
+               new_nodes.append(old_node)
+               continue
+
+          nodes = []
+          node_str = old_node.text
+          for img in images:
+               split = node_str.split(f"![{img[0]}]({img[1]})")
+
+               if split[0] != '':
+                    nodes.append(TextNode(split[0], TextType.TEXT))
+               nodes.append(TextNode(img[0], TextType.IMAGE, img[1]))
+               
+               node_str = split[1]
+          new_nodes.extend(nodes)
+     return new_nodes
+               
+def split_nodes_link(old_nodes):
+     new_nodes = []
+
+     for old_node in old_nodes:
+          # if not TextType.TEXT, extend as it is and iterate to next
+          if old_node.text_type != TextType.TEXT:
+               new_nodes.append(old_node)
+               continue
+
+          links = extract_markdown_links(old_node.text)
+          
+          # if no links found, extend the old_node as it is and iterate to the next
+          if not links:
+               new_nodes.append(old_node)
+               continue
+
+          nodes = []
+          node_str = old_node.text
+          for link in links:
+               split = node_str.split(f"[{link[0]}]({link[1]})")
+
+               if split[0] != '':
+                    nodes.append(TextNode(split[0], TextType.TEXT))
+               nodes.append(TextNode(link[0], TextType.IMAGE, link[1]))
+               
+               node_str = split[1]
+          new_nodes.extend(nodes)
+     return new_nodes
+
+img_text = TextNode(
+    "This is image with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)",
+    TextType.TEXT,
+)
+link = TextNode(
+    "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
+    TextType.TEXT,
+)
+print(split_nodes_images([img_text]))
+print(split_nodes_link([link]))
+
 
