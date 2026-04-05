@@ -72,3 +72,56 @@ class TestDelimiter(unittest.TestCase):
                new_nodes = split_nodes_delimiter([error_node], "**", TextType.BOLD)
 
                self.assertEqual(str(err.exception), "Invalid Markdown syntax")
+     
+     # Below are Tests for images and links
+
+     def test_images(self):
+          node = TextNode("This is image with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", TextType.TEXT,)
+
+          self.assertEqual(
+               split_nodes_images([node]),
+               [
+                    TextNode("This is image with a ", TextType.TEXT),
+                    TextNode("rick roll", TextType.IMAGE, "https://i.imgur.com/aKaOqIh.gif"),
+                    TextNode(" and ", TextType.TEXT),
+                    TextNode("obi wan", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg")
+               ]
+          )
+
+     def test_links(self):
+          node = TextNode("This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)", TextType.TEXT,)
+
+          self.assertEqual(
+               split_nodes_links([node]),
+               [
+                    TextNode("This is text with a link ", TextType.TEXT),
+                    TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
+                    TextNode(" and ", TextType.TEXT),
+                    TextNode("to youtube", TextType.LINK,'https://www.youtube.com/@bootdotdev')
+               ]
+          )
+     
+     def test_split_link_with_image(self):
+          node = TextNode("This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)", TextType.TEXT,)
+     
+          self.assertEqual(
+               split_nodes_images([node]),
+               [
+                    TextNode("This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)", TextType.TEXT)
+               ]
+          )
+     
+     def test_links_and_images(self):
+          img_node = TextNode("This is image with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", TextType.TEXT,)
+          link_node = TextNode("This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)", TextType.TEXT,)
+
+          self.assertEqual(
+               split_nodes_links([img_node, link_node]),
+               [
+                    TextNode("This is image with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", TextType.TEXT),
+                    TextNode("This is text with a link ", TextType.TEXT),
+                    TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
+                    TextNode(" and ", TextType.TEXT),
+                    TextNode("to youtube", TextType.LINK,'https://www.youtube.com/@bootdotdev'),
+               ]
+          )

@@ -1,14 +1,14 @@
 import re
 
 def extract_markdown_images(img_text):
-     pattern = r"!\[([^\[\]]*)\]\(([^\[\]]*)\)"
+     pattern = r"(?<=!)\[([^\[\]]*)\]\(([^\[\]]*)\)"
      #              "[^\[\]]*"
      # the above component has the initial [] which character class with ^ indicating to ignore the following letters 
      # letters/chr to ignore is "[" and "]" and followed by * at the end of the bracket for chr class meaning 0 or more of the allowed chrs 
      return re.findall(pattern, img_text)
 
 def extract_markdown_links(text):
-     pattern = r"\[(.*?)\]\((.*?)\)"
+     pattern = r"(?<!!)\[([^\[\]]*)\]\(([^\[\]]*)\)"
      return re.findall(pattern, text)
 
 

@@ -58,7 +58,7 @@ def split_nodes_images(old_nodes):
           new_nodes.extend(nodes)
      return new_nodes
                
-def split_nodes_link(old_nodes):
+def split_nodes_links(old_nodes):
      new_nodes = []
 
      for old_node in old_nodes:
@@ -81,21 +81,23 @@ def split_nodes_link(old_nodes):
 
                if split[0] != '':
                     nodes.append(TextNode(split[0], TextType.TEXT))
-               nodes.append(TextNode(link[0], TextType.IMAGE, link[1]))
+               nodes.append(TextNode(link[0], TextType.LINK, link[1]))
                
                node_str = split[1]
           new_nodes.extend(nodes)
      return new_nodes
 
-img_text = TextNode(
-    "This is image with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)",
-    TextType.TEXT,
-)
-link = TextNode(
-    "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
-    TextType.TEXT,
-)
-print(split_nodes_images([img_text]))
-print(split_nodes_link([link]))
+#  *****sample tests below*****
+
+# img_text = TextNode(
+#     "This is image with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)",
+#     TextType.TEXT,
+# )
+# link = TextNode(
+#     "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
+#     TextType.TEXT,
+# )
+# print(split_nodes_images([img_text]))
+# print(split_nodes_links([link]))
 
 
