@@ -1,6 +1,5 @@
 from textnode import *
 from htmlnode import *
-from extract_links import *
 import re
 
 def text_to_textnodes(text):
