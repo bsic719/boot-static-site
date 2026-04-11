@@ -31,7 +31,6 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
 
 def split_nodes_images(old_nodes):
      new_nodes = []
-
      for old_node in old_nodes:
           # if not TextType.TEXT, extend as it is and iterate to next
           if old_node.text_type != TextType.TEXT:
@@ -49,13 +48,17 @@ def split_nodes_images(old_nodes):
           node_str = old_node.text
           for img in images:
                split = node_str.split(f"![{img[0]}]({img[1]})")
-
                if split[0] != '':
                     nodes.append(TextNode(split[0], TextType.TEXT))
                nodes.append(TextNode(img[0], TextType.IMAGE, img[1]))
                
                node_str = split[1]
+
+          # if there is node_str left than extend it to the list
+          if node_str:
+               nodes.append(TextNode(node_str, TextType.TEXT))
           new_nodes.extend(nodes)
+
      return new_nodes
                
 def split_nodes_links(old_nodes):
@@ -84,6 +87,10 @@ def split_nodes_links(old_nodes):
                nodes.append(TextNode(link[0], TextType.LINK, link[1]))
                
                node_str = split[1]
+          
+          # if there is node_str left than extend it to the list
+          if node_str:
+               nodes.append(TextNode(node_str, TextType.TEXT))
           new_nodes.extend(nodes)
      return new_nodes
 
