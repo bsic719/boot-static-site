@@ -1,6 +1,26 @@
 from textnode import *
 from htmlnode import *
 from extract_links import *
+import re
+
+def text_to_textnodes(text):
+     new_nodes = []
+
+     new_nodes.extend(split_nodes_delimiter([text], "**", TextType.BOLD))
+
+     new_nodes = (split_nodes_delimiter(new_nodes, "_", TextType.ITALIC))
+
+     new_nodes = (split_nodes_delimiter(new_nodes, "`", TextType.CODE))
+
+     new_nodes = (split_nodes_images(new_nodes))
+
+     new_nodes = (split_nodes_links(new_nodes))
+
+     return new_nodes
+# node = TextNode("This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)", TextType.TEXT)
+
+# result = text_to_textnodes(node)
+# print(result)
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
      new_nodes = []
@@ -107,4 +127,15 @@ def split_nodes_links(old_nodes):
 # print(split_nodes_images([img_text]))
 # print(split_nodes_links([link]))
 
+
+def extract_markdown_images(img_text):
+     pattern = r"(?<=!)\[([^\[\]]*)\]\(([^\[\]]*)\)"
+     #              "[^\[\]]*"
+     # the above component has the initial [] which character class with ^ indicating to ignore the following letters 
+     # letters/chr to ignore is "[" and "]" and followed by * at the end of the bracket for chr class meaning 0 or more of the allowed chrs 
+     return re.findall(pattern, img_text)
+
+def extract_markdown_links(text):
+     pattern = r"(?<!!)\[([^\[\]]*)\]\(([^\[\]]*)\)"
+     return re.findall(pattern, text)
 

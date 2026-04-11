@@ -1,9 +1,9 @@
 import unittest
 from textnode import *
 from htmlnode import *
-from textnode_delimiter import *
+from inline_delimiter import *
 
-class TestDelimiter(unittest.TestCase):
+class TestInlineMarkdown(unittest.TestCase):
      bold_node = TextNode("This is text with a **bold** word", TextType.TEXT)
      bold_node2 = TextNode("This is **something** special, do you **understand** corporal?", TextType.TEXT)
      italic_node = TextNode("This is text with an _italic_ word", TextType.TEXT)
@@ -72,9 +72,10 @@ class TestDelimiter(unittest.TestCase):
                new_nodes = split_nodes_delimiter([error_node], "**", TextType.BOLD)
 
                self.assertEqual(str(err.exception), "Invalid Markdown syntax")
-     
-     # Below are Tests for images and links
 
+     ######################################
+     # Below are Tests for images and links
+     ######################################
      def test_images(self):
           node = TextNode("This is image with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", TextType.TEXT,)
 
@@ -123,5 +124,69 @@ class TestDelimiter(unittest.TestCase):
                     TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
                     TextNode(" and ", TextType.TEXT),
                     TextNode("to youtube", TextType.LINK,'https://www.youtube.com/@bootdotdev'),
+               ]
+          )
+
+
+
+     ######################################
+     # extract links & images
+     ######################################
+class TestExtractLinks(unittest.TestCase):
+     def test_extract_link(self):
+          text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+          
+          self.assertEqual(
+               extract_markdown_links(text),
+               [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")]
+          )
+     
+     def test_extract_img(self):
+          img_text = "This is image with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+
+          self.assertEqual(
+               extract_markdown_images(img_text),
+               [("rick roll", "https://i.imgur.com/aKaOqIh.gif"), ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")]
+          ) 
+     
+     def test_extract_img_on_link(self):
+          text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+          
+          self.assertEqual(
+               extract_markdown_images(text),
+               []
+          )
+
+
+     ######################################
+     # Converting text to TextNodes
+     ######################################
+class TestTextToTextNodes(unittest.TestCase):
+     def test_multiple_types(self):
+          node = TextNode("This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)", TextType.TEXT)
+
+          self.assertEqual(
+               text_to_textnodes(node),
+               [
+                    TextNode("This is ", TextType.TEXT),
+                    TextNode("text", TextType.BOLD),
+                    TextNode(" with an ", TextType.TEXT),
+                    TextNode("italic", TextType.ITALIC),
+                    TextNode(" word and a ", TextType.TEXT),
+                    TextNode("code block", TextType.CODE),
+                    TextNode(" and an ", TextType.TEXT),
+                    TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                    TextNode(" and a ", TextType.TEXT),
+                    TextNode("link", TextType.LINK, "https://boot.dev"),
+               ]
+          ) 
+     
+     def test_text_to_textnodes_plain(self):
+          node = TextNode("Just plain text", TextType.TEXT)
+
+          self.assertEqual(
+               text_to_textnodes(node),
+               [
+                  TextNode("Just plain text", TextType.TEXT)  
                ]
           )
